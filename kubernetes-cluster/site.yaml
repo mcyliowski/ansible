@@ -15,3 +15,23 @@
   become: true
   roles:
     - join-workers
+
+- name: Wait for the cluster
+  hosts: ansible1
+  become: true
+  roles:
+    - wait   
+
+- name: Wait until all nodes are Ready
+  hosts: all
+  become: true
+  roles:
+    - wait
+
+- name : Install app
+  hosts: ansible1
+  become: true
+  collections:
+    - kubernetes.core
+  roles:
+    - install-app

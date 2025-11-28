@@ -1,0 +1,9 @@
+- name: Wait until all nodes are Ready
+#   shell: |
+#     kubectl get nodes --no-headers | grep -v ' Ready ' || true
+#   register: not_ready
+#   retries: 20
+#   delay: 6
+#   until: not_ready.stdout == ""
+  ansible.builtin.pause:
+    minutes: 2

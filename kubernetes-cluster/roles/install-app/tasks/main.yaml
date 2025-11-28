@@ -1,0 +1,38 @@
+---
+- name: Installing git on control-plane
+  apt:
+    name: git
+    state: latest
+    update_cache: yes
+
+- name: Dwonloading helm 
+  get_url:
+    url: "{{ url }}"
+    dest: /tmp
+    mode: '0755'
+
+- name: Extract Helm binary
+  unarchive:
+    src: "{{ file }}"
+    dest: /tmp/
+    remote_src: yes
+    
+- name: Move helm to /usr/local/bin
+  command: mv "{{ chart_dir }}/helm" /usr/local/bin/helm
+       
+
+- name: Git clone stable repo on HEAD
+  ansible.builtin.git:
+    repo: "{{ git_repo }}"
+    dest: "{{ dest_dir }}"
+    
+- name: Deploy Helm chart
+  kubernetes.core.helm:
+    name: poe-woc
+    chart_ref: "{{ chart_ref }}"
+    release_namespace: jenkins
+    create_namespace: yes
+    state: present
+    kubeconfig: "{{ config }}"
+
+
