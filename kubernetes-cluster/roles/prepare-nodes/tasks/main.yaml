@@ -1,6 +1,6 @@
 ---
 # -------------------------------------------------------
-# System i pakiety bazowe
+# System & packets
 # -------------------------------------------------------
 
 - name: Install required packages
@@ -11,6 +11,7 @@
       - curl
       - gnupg
       - software-properties-common
+      - git
     state: present
     update_cache: yes
 

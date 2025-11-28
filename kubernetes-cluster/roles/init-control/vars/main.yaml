@@ -1,0 +1,7 @@
+git_repo: "https://github.com/mcyliowski/helm_charts.git"
+dest_dir: /tmp/poe-woc
+chart_dir: /tmp/linux-amd64
+url: "https://get.helm.sh/helm-v3.13.1-linux-amd64.tar.gz"
+file: /tmp/helm-v3.13.1-linux-amd64.tar.gz
+user: cyna
+calico_CNI: "https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml"

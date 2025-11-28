@@ -1,29 +1,47 @@
+---
+- name: Dwonloading helm 
+  get_url:
+    url: "{{ url }}" 
+    dest: /tmp
+    mode: '0755'
+
+- name: Extract Helm binary
+  unarchive:
+    src: "{{ file }}"
+    dest: /tmp/
+    remote_src: yes
+    
+- name: Move helm to /usr/local/bin
+  become: yes 
+  command: mv "{{ chart_dir }}/helm" /usr/local/bin/helm
+
+
 - name: Initialize Kubernetes control plane
   command: kubeadm init --pod-network-cidr=10.244.0.0/16 --control-plane-endpoint=ansible1
   register: kubeadm_init
   args:
     creates: /etc/kubernetes/admin.conf
 
-- name: Create .kube directory for cyna
+- name: Create .kube directory for user
   file:
-    path: /home/cyna/.kube
+    path: "/home/{{ user }}/.kube"
     state: directory
-    owner: cyna
-    group: cyna
+    owner: "{{ user }}"
+    group: "{{ user }}"
     mode: '0755'
 
 - name: Copy admin.conf to user's kube config
   copy:
     src: /etc/kubernetes/admin.conf
-    dest: /home/cyna/.kube/config
+    dest: "/home/{{ user }}/.kube/config"
     remote_src: yes
-    owner: cyna
-    group: cyna
+    owner: "{{ user }}"
+    group: "{{ user }}"
     mode: '0644'
 
 - name: Set kubeconfig fact
   set_fact:
-    kubeconfig_path: /home/cyna/.kube/config
+    kubeconfig_path: "/home/{{ user }}/.kube/config"
 
 - name: Wait for Kubernetes API to be ready
   command: kubectl get nodes
@@ -35,15 +53,15 @@
   until: kube_api.rc == 0
 
 - name: Install Calico CNI
-  command: kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.28.0/manifests/calico.yaml
+  command: "kubectl apply -f {{ calico_CNI }}"
   environment:
     KUBECONFIG: "{{ kubeconfig_path }}"
 
 - name: Wait for all control plane pods to be Ready
-  become_user: cyna
+  become_user: "{{ user }}"
   command: kubectl wait --for=condition=Ready pod --all -n kube-system --timeout=300s
   environment:
-    KUBECONFIG: /home/cyna/.kube/config 
+    KUBECONFIG: "/home/{{ user }}/.kube/config" 
 
 
 - name: Save kubeadm join command for workers
