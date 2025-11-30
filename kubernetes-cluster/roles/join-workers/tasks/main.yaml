@@ -1,5 +1,5 @@
 ---
 - name: Join worker node to the cluster
-  command: "{{ hostvars['ansible1'].join_command }}"
-  when: hostvars['ansible1'].join_command is defined
+  command: "{{ hostvars['control-plane''].join_command }}"
+  when: hostvars['control-plane''].join_command is defined
 
