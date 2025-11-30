@@ -5,22 +5,17 @@
     - prepare-nodes
 
 - name: Initialize control plane
-  hosts: control
+  hosts: control-plane
   become: true
   roles:
     - init-control
   
 - name: Join worker nodes to the cluster
-  hosts: workers
+  hosts: worker1
   become: true
   roles:
     - join-workers
-
-- name: Wait for the cluster
-  hosts: ansible1
-  become: true
-  roles:
-    - wait   
+  
 
 - name: Wait until all nodes are Ready
   hosts: all
@@ -29,7 +24,7 @@
     - wait
 
 - name : Install app
-  hosts: ansible1
+  hosts: control-plane
   become: true
   collections:
     - kubernetes.core
