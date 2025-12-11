@@ -30,7 +30,7 @@
   kubernetes.core.helm:
     name: poe-woc
     chart_ref: "{{ chart_ref }}"
-    release_namespace: jenkins
+    release_namespace: "{{ namespace_name }}"
     create_namespace: yes
     state: present
     kubeconfig: "{{ config }}"
